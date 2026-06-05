@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+<link rel="icon" type="image/x-icon" href="img/Gemini_Generated_Image_69ohf669ohf669oh_1_.ico">
+
+<title>Escolha de Assento</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+
+.assento{
+    width:60px;
+    height:60px;
+    margin:5px;
+    border:none;
+    border-radius:10px;
+    font-weight:bold;
+}
+
+.livre{
+    background:#198754;
+    color:white;
+}
+
+.ocupado{
+    background:#dc3545;
+    color:white;
+}
+
+.selecionado{
+    background:#0d6efd;
+    color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+
+<div class="container">
+
+<p class="navbar-brand mb-0" id="usuario"></p>
+
+<a class="navbar-brand" href="dashboard.html">
+🚌 Transporte Universitário
+</a>
+
+<div class="navbar-nav ms-auto">
+
+<a class="nav-link" href="dashboard.html">
+Início
+</a>
+
+<a class="nav-link active" href="passagens.html">
+Passagens
+</a>
+
+<a class="nav-link" href="carteira.html">
+Carteira
+</a>
+
+<a class="nav-link" href="avisos.html">
+Avisos
+</a>
+
+<a class="nav-link" href="historico.html">
+Histórico
+</a>
+
+<a class="nav-link" href="perfil.html">
+Perfil
+</a>
+
+<li
+class="nav-item dropdown"
+id="menuAdmin"
+style="display:none; list-style:none;">
+
+<a
+class="nav-link dropdown-toggle"
+href="#"
+role="button"
+data-bs-toggle="dropdown">
+
+⚙ Administração
+
+</a>
+
+<ul class="dropdown-menu">
+
+<li>
+<a class="dropdown-item"
+href="admin/viagens.html">
+🚍 Viagens
+</a>
+</li>
+
+<li>
+<a class="dropdown-item"
+href="admin/usuarios.html">
+👥 Usuários
+</a>
+</li>
+
+<li>
+<a class="dropdown-item"
+href="admin/relatorios.html">
+📊 Relatórios
+</a>
+</li>
+
+</ul>
+
+</li>
+
+<a
+class="nav-link text-warning"
+href="#"
+onclick="sair()">
+
+Sair
+
+</a>
+
+</div>
+
+</div>
+
+</nav>
+
+<div class="container mt-4">
+
+<div class="card shadow p-3 mb-4">
+
+<h4>
+Viagem Selecionada
+</h4>
+
+<div id="viagemInfo">
+
+Carregando informações...
+
+</div>
+
+</div>
+
+<div class="card shadow p-3">
+
+<h4>
+Escolha seu Assento
+</h4>
+
+<div
+id="assentos"
+class="d-flex flex-wrap mt-3">
+
+</div>
+
+</div>
+
+<div class="mt-4">
+
+<h5 id="assentoEscolhido">
+
+Nenhum assento selecionado
+
+</h5>
+
+<a
+href="passagens.html"
+class="btn btn-secondary">
+
+← Escolher Outra Viagem
+
+</a>
+
+<button
+class="btn btn-success"
+onclick="continuarPagamento()">
+
+Continuar para Pagamento
+
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+const usuario =
+JSON.parse(
+localStorage.getItem('usuario')
+);
+
+if(!usuario){
+
+    window.location.href =
+    'index.html';
+
+}
+
+document.getElementById('usuario').innerHTML =
+`Olá ${usuario.nome} 👋`;
+
+if(usuario.tipo === 'ADMIN'){
+
+    document.getElementById(
+        'menuAdmin'
+    ).style.display = 'block';
+
+}
+
+const viagemId =
+localStorage.getItem(
+'viagemSelecionada'
+);
+
+if(!viagemId){
+
+    alert(
+        'Nenhuma viagem selecionada'
+    );
+
+    window.location.href =
+    'passagens.html';
+
+}
+
+let assentoSelecionado = null;
+
+carregarViagem();
+carregarAssentos();
+
+// Atualiza os assentos a cada 10 segundos
+setInterval(() => {
+    carregarAssentos();
+}, 10000);
+
+async function carregarViagem(){
+
+    try{
+
+        const resposta =
+        await fetch(
+        'http://localhost:3000/passagens'
+        );
+
+        const viagens =
+        await resposta.json();
+
+        const viagem =
+        viagens.find(
+            v => v.id == viagemId
+        );
+
+        if(!viagem){
+
+            document.getElementById(
+                'viagemInfo'
+            ).innerHTML =
+            'Viagem não encontrada';
+
+            return;
+
+        }
+
+        document.getElementById(
+        'viagemInfo'
+        ).innerHTML =
+
+        `
+        <p>
+        <strong>Origem:</strong>
+        ${viagem.origem}
+        </p>
+
+        <p>
+        <strong>Destino:</strong>
+        ${viagem.destino}
+        </p>
+
+        <p>
+        <strong>Data:</strong>
+        ${new Date(
+        viagem.data_ida
+        ).toLocaleDateString('pt-BR')}
+        </p>
+
+        <p>
+        <strong>Saída:</strong>
+        ${viagem.horario_saida.substring(0,5)}
+        </p>
+
+        <p>
+        <strong>Vagas:</strong>
+        ${viagem.vagas_disponiveis}
+        </p>
+
+        <h5 class="text-success">
+        R$ ${viagem.valor}
+        </h5>
+        `;
+
+    }catch(err){
+
+        console.log(err);
+
+    }
+
+}
+
+async function carregarAssentos(){
+
+    try{
+
+        const resposta =
+        await fetch(
+        `http://localhost:3000/assentos/viagem/${viagemId}`
+        );
+
+        const assentos =
+        await resposta.json();
+
+        let html = '';
+
+        assentos.forEach(a => {
+
+            html += `
+
+            <button
+                id="assento-${a.numero}"
+                class="assento ${a.ocupado ? 'ocupado' : 'livre'}"
+                ${a.ocupado ? 'disabled' : ''}
+                onclick="selecionar(${a.numero})">
+
+                ${a.numero}
+
+            </button>
+
+            `;
+
+        });
+
+        document.getElementById(
+            'assentos'
+        ).innerHTML = html;
+
+        // Se o assento escolhido ficou ocupado
+        if(assentoSelecionado){
+
+            const atual =
+            assentos.find(
+                a => a.numero == assentoSelecionado
+            );
+
+            if(atual && atual.ocupado){
+
+                assentoSelecionado = null;
+
+                document.getElementById(
+                    'assentoEscolhido'
+                ).innerHTML =
+                'Nenhum assento selecionado';
+
+                alert(
+                    'O assento escolhido acabou de ser ocupado por outro usuário.'
+                );
+
+            }
+
+        }
+
+    }catch(err){
+
+        console.log(err);
+
+        document.getElementById(
+        'assentos'
+        ).innerHTML =
+
+        `
+        <div class="alert alert-danger">
+            Erro ao carregar assentos.
+        </div>
+        `;
+
+    }
+
+}
+function selecionar(numero){
+
+    document
+    .querySelectorAll('.assento')
+    .forEach(btn => {
+
+        if(
+        btn.classList.contains(
+        'livre'
+        )
+        ){
+
+            btn.classList.remove(
+            'selecionado'
+            );
+
+        }
+
+    });
+
+    document
+    .getElementById(
+    `assento-${numero}`
+    )
+    .classList.add(
+    'selecionado'
+    );
+
+    assentoSelecionado =
+    numero;
+
+    document.getElementById(
+    'assentoEscolhido'
+    ).innerHTML =
+
+    `Assento selecionado: ${numero}`;
+
+}
+
+function continuarPagamento(){
+
+    if(!assentoSelecionado){
+
+        alert(
+        'Selecione um assento'
+        );
+
+        return;
+
+    }
+
+    localStorage.setItem(
+        'assentoSelecionado',
+        assentoSelecionado
+    );
+
+    window.location.href =
+    'pagamento.html';
+
+}
+
+function sair(){
+
+    localStorage.removeItem(
+        'usuario'
+    );
+
+    window.location.href =
+    'index.html';
+
+}
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/tema.js"></script>
+</body>
+</html>
+

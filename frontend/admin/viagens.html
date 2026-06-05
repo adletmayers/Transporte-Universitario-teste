@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<link rel="icon" type="image/x-icon" href="../img/Gemini_Generated_Image_69ohf669ohf669oh_1_.ico">
+<link rel="stylesheet" href="../css/style.css"> 
+<title>Admin - Viagens</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+<nav ></nav>
+<nav class="navbar navbar-expand-lg">
+
+<div class="container">
+
+<p class="navbar-brand mb-0" id="usuario"></p>
+
+<a class="navbar-brand" href="../dashboard.html">
+    <img src="../img/Adobe Express - file.png" alt="Logo" class="nav-logo">
+    Transporte Universitário
+</a>
+
+<div class="navbar-nav ms-auto">
+
+<a class="nav-link" href="../dashboard.html">
+Início
+</a>
+
+<a class="nav-link" href="../rotas.html">
+Rotas
+</a>
+
+<a class="nav-link" href="../passagens.html">
+Passagens
+</a>
+
+<a class="nav-link" href="../carteira.html">
+Carteira
+</a>
+
+<a class="nav-link" href="../avisos.html">
+Avisos
+</a>
+
+<a class="nav-link active" href="../perfil.html">
+Perfil
+</a>
+
+<a class="nav-link" href="../historico.html">
+Histórico
+</a>
+
+<li
+class="nav-item dropdown"
+id="menuAdmin"
+style="display:none; list-style:none;">
+
+<a
+class="nav-link dropdown-toggle"
+href="#"
+role="button"
+data-bs-toggle="dropdown">
+
+⚙ Administração
+
+</a>
+
+<ul class="dropdown-menu">
+
+<li>
+
+<a
+class="dropdown-item"
+href="../admin/viagens.html">
+
+🚍 Viagens
+
+</a>
+
+</li>
+
+<li>
+
+<a
+class="dropdown-item"
+href="../admin/usuarios.html">
+
+👥 Usuários
+
+</a>
+
+</li>
+
+<li>
+
+<a
+class="dropdown-item"
+href="../admin/relatorios.html">
+
+📊 Relatórios
+
+</a>
+
+</li>
+
+</ul>
+
+</li>
+
+<a class="nav-link" href="../sobre.html">
+Sobre
+</a>
+
+<a
+class="nav-link text-warning"
+href="#"
+onclick="sair()">
+
+Sair
+
+</a>
+
+</div>
+
+</div>
+
+</nav>
+
+<div class="container mt-4">
+
+<h2 id="tituloPagina">
+Cadastrar Viagem
+</h2>
+
+<input id="origem" class="form-control mb-2" placeholder="Origem">
+
+<input id="destino" class="form-control mb-2" placeholder="Destino">
+
+<input id="data" type="date" class="form-control mb-2">
+
+<input id="saida" type="time" class="form-control mb-2">
+
+<input id="chegada" type="time" class="form-control mb-2">
+
+<input id="valor" type="number" class="form-control mb-2">
+
+<input id="vagas" type="number" class="form-control mb-2">
+
+<button
+id="btnSalvar"
+class="btn btn-success"
+onclick="salvar()">
+
+Cadastrar
+
+</button>
+
+</div>
+<hr>
+<div class="container mt-4">
+<h3>
+Viagens Cadastradas
+</h3>
+
+<div id="listaViagens"></div>
+
+<script>
+
+const usuario =
+JSON.parse(
+localStorage.getItem('usuario')
+);
+if(usuario){
+
+document.getElementById('usuario').innerHTML =
+`Olá ${usuario.nome} 👋`;
+
+}
+if(usuario && usuario.tipo === 'ADMIN'){
+
+    document.getElementById(
+        'menuAdmin'
+    ).style.display = 'block';
+
+}
+
+async function salvar(){
+
+    const viagemId =
+    localStorage.getItem(
+    'editarViagemId'
+    );
+    console.log('ID edição:', viagemId);
+
+    const url = viagemId
+    ? `http://localhost:3000/admin/viagens/${viagemId}`
+    : 'http://localhost:3000/admin/viagens';
+
+    const metodo = viagemId
+    ? 'PUT'
+    : 'POST';
+    console.log('Método:', metodo);
+    console.log('URL:', url);
+
+    const resposta = await fetch(
+
+        url,
+
+        {
+            method: metodo,
+
+            headers:{
+                'Content-Type':
+                'application/json'
+            },
+
+            body: JSON.stringify({
+
+                origem:
+                document.getElementById('origem').value,
+
+                destino:
+                document.getElementById('destino').value,
+
+                data_ida:
+                document.getElementById('data').value,
+
+                horario_saida:
+                document.getElementById('saida').value,
+
+                horario_chegada:
+                document.getElementById('chegada').value,
+
+                valor:
+                document.getElementById('valor').value,
+
+                vagas_totais:
+                document.getElementById('vagas').value
+
+            })
+
+        }
+
+    );
+
+    const dados =
+    await resposta.json();
+
+    if(dados.erro){
+
+        alert(dados.erro);
+
+        return;
+
+    }
+
+    alert(
+
+        viagemId
+        ? 'Viagem atualizada!'
+        : 'Viagem cadastrada!'
+
+    );
+
+    localStorage.removeItem(
+    'editarViagemId'
+    );
+    document.getElementById(
+    'tituloPagina'
+    ).innerText =
+    'Cadastrar Viagem';
+
+    document.getElementById(
+    'btnSalvar'
+    ).innerText =
+    'Cadastrar';
+
+    document.getElementById(
+    'btnSalvar'
+    ).classList.remove(
+    'btn-warning'
+    );
+
+    document.getElementById(
+    'btnSalvar'
+    ).classList.add(
+    'btn-success'
+    );
+
+    location.reload();
+
+}
+
+function sair(){
+
+    localStorage.removeItem('usuario');
+
+    window.location.href =
+    '../index.html';
+
+}
+
+carregarViagens();
+async function carregarViagens(){
+
+    try{
+
+        const resposta =
+        await fetch(
+        'http://localhost:3000/admin/viagens'
+        );
+
+        const viagens =
+        await resposta.json();
+
+        let html = '';
+
+        viagens.forEach(v => {
+
+            html += `
+
+            <div class="card p-3 mb-3 shadow">
+
+                <h5>
+
+                🚌 ${v.origem}
+                ➜
+                ${v.destino}
+
+                </h5>
+
+                <p>
+
+                Data:
+                📅 ${new Date(v.data_ida)
+                .toLocaleDateString('pt-BR')}
+                </p>
+
+                <p>
+                🕒 ${v.horario_saida.substring(0,5)}
+                ➜
+                ${v.horario_chegada.substring(0,5)}
+                </p>
+
+                <p>
+                💰 R$ ${v.valor}
+                </p>
+
+                <p>
+                👥 ${v.vagas_disponiveis}/${v.vagas_totais} vagas
+                
+                </p>
+
+                <div class="d-flex gap-2">
+
+                <button
+                class="btn btn-warning"
+                onclick="editarViagem(${v.id})">
+
+                Editar
+
+                </button>
+
+                <button
+                class="btn btn-danger"
+                onclick="excluirViagem(${v.id})">
+
+                Excluir
+
+                </button>
+
+            </div>
+                        
+
+            </div>
+
+            `;
+
+        });
+
+        document.getElementById(
+        'listaViagens'
+        ).innerHTML = html;
+
+    }catch(err){
+
+        console.log(err);
+
+    }
+
+}
+async function excluirViagem(id){
+
+    const confirmar =
+    confirm(
+        'Deseja excluir esta viagem?'
+    );
+
+    if(!confirmar){
+
+        return;
+
+    }
+
+    const resposta =
+    await fetch(
+
+        `http://localhost:3000/admin/viagens/${id}`,
+
+        {
+            method:'DELETE'
+        }
+
+    );
+
+    const dados =
+    await resposta.json();
+
+    alert(
+        dados.mensagem
+    );
+
+    carregarViagens();
+
+}
+async function editarViagem(id){
+
+    try{
+
+        const resposta =
+        await fetch(
+            `http://localhost:3000/admin/viagens/${id}`
+        );
+
+        const viagem =
+        await resposta.json();
+
+        console.log(viagem);
+
+        document.getElementById('origem').value =
+        viagem.origem;
+
+        document.getElementById('destino').value =
+        viagem.destino;
+
+        document.getElementById('data').value =
+        viagem.data_ida.split('T')[0];
+
+        document.getElementById('saida').value =
+        viagem.horario_saida.substring(0,5);
+
+        document.getElementById('chegada').value =
+        viagem.horario_chegada.substring(0,5);
+
+        document.getElementById('valor').value =
+        viagem.valor;
+
+        document.getElementById('vagas').value =
+        viagem.vagas_totais;
+
+        localStorage.setItem(
+            'editarViagemId',
+            id
+            
+        );
+        document.getElementById(
+        'tituloPagina'
+        ).innerText =
+        'Editar Viagem';
+
+        document.getElementById(
+        'btnSalvar'
+        ).innerText =
+        'Atualizar';
+
+        document.getElementById(
+        'btnSalvar'
+        ).classList.remove(
+        'btn-success'
+        );
+
+        document.getElementById(
+        'btnSalvar'
+        ).classList.add(
+        'btn-warning'
+        );
+
+        console.log('Campos preenchidos');
+
+    }catch(err){
+
+        console.error(err);
+
+    }
+
+}
+</script>
+</div>
+<script src="../js/tema.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

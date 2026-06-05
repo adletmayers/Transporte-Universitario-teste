@@ -1,0 +1,581 @@
+/* ========================================
+   VARIÁVEIS DE TEMA
+======================================== */
+
+:root{
+
+    --bg:#0F172A;
+    --surface:#1E293B;
+    --card:#334155;
+
+    --primary:#2563EB;
+    --primary-hover:#3B82F6;
+
+    --text:#F8FAFC;
+    --text-secondary:#CBD5E1;
+
+    --success:#22C55E;
+    --warning:#FACC15;
+    --danger:#EF4444;
+
+    --shadow:0 8px 25px rgba(0,0,0,.25);
+
+    --radius:18px;
+
+}
+
+/* ========================================
+   TEMA CLARO
+======================================== */
+
+
+
+/* ========================================
+   RESET
+======================================== */
+
+*{
+
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+
+}
+
+body{
+
+    background:var(--bg);
+    color:var(--text);
+
+    font-family:
+    Inter,
+    Segoe UI,
+    Arial,
+    sans-serif;
+
+    min-height:100vh;
+
+    transition:
+    background .3s,
+    color .3s;
+
+}
+
+/* ========================================
+   TOPO
+======================================== */
+
+.topo{
+
+    background:linear-gradient(
+        135deg,
+        #2563EB,
+        #1D4ED8
+    );
+
+    color:white;
+
+    padding:25px;
+
+    border-radius:
+    0
+    0
+    25px
+    25px;
+
+    box-shadow:var(--shadow);
+
+}
+
+/* ========================================
+   NAVBAR
+======================================== */
+
+.navbar{
+
+    background:var(--surface) !important;
+
+    box-shadow:var(--shadow);
+
+}
+
+.navbar-brand{
+
+    color:var(--text) !important;
+    font-weight:700;
+
+}
+
+/* ========================================
+   CARDS
+======================================== */
+
+.card{
+
+    background:var(--card);
+
+    border:none;
+
+    border-radius:var(--radius);
+
+    color:var(--text);
+
+    box-shadow:var(--shadow);
+
+    transition:.25s ease;
+
+}
+
+.card:hover{
+
+    transform:
+    translateY(-5px);
+
+}
+
+.card-menu{
+
+    cursor:pointer;
+
+}
+
+/* ========================================
+   LINKS
+======================================== */
+
+.card-link{
+
+    text-decoration:none;
+    color:inherit;
+
+}
+
+/* ========================================
+   SALDO
+======================================== */
+
+.saldo{
+
+    background:linear-gradient(
+        135deg,
+        #22C55E,
+        #16A34A
+    );
+
+    color:white;
+
+    border-radius:var(--radius);
+
+    padding:20px;
+
+    box-shadow:var(--shadow);
+
+}
+
+/* ========================================
+   LOGIN
+======================================== */
+
+.login-box{
+
+    max-width:420px;
+
+    margin:auto;
+
+    margin-top:70px;
+
+    background:var(--surface);
+
+    padding:35px;
+
+    border-radius:25px;
+
+    box-shadow:var(--shadow);
+
+}
+
+/* ========================================
+   INPUTS
+======================================== */
+
+.form-control{
+
+    background:var(--surface);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    color:var(--text);
+
+    border-radius:12px;
+
+}
+
+.form-control:focus{
+
+    border-color:var(--primary);
+
+    box-shadow:
+    0 0 0 .2rem
+    rgba(37,99,235,.25);
+
+}
+
+/* ========================================
+   BOTÕES
+======================================== */
+
+.btn-primary{
+
+    background:var(--primary);
+    border:none;
+
+}
+
+.btn-primary:hover{
+
+    background:var(--primary-hover);
+
+}
+
+.btn-success{
+
+    background:var(--success);
+    border:none;
+
+}
+
+.btn-danger{
+
+    background:var(--danger);
+    border:none;
+
+}
+
+/* ========================================
+   TABELAS
+======================================== */
+
+.table{
+
+    color:var(--text);
+
+}
+
+.table thead{
+
+    background:var(--primary);
+
+    color:white;
+
+}
+
+/* ========================================
+   NAV BOTTOM
+======================================== */
+
+.nav-bottom{
+
+    position:fixed;
+
+    bottom:0;
+    left:0;
+
+    width:100%;
+
+    background:var(--surface);
+
+    display:flex;
+
+    justify-content:space-around;
+
+    align-items:center;
+
+    padding:14px;
+
+    box-shadow:
+    0 -3px 15px rgba(0,0,0,.25);
+
+    z-index:1000;
+
+}
+
+.nav-bottom a{
+
+    text-decoration:none;
+
+    color:var(--primary);
+
+    font-weight:600;
+
+    transition:.2s;
+
+}
+
+.nav-bottom a:hover{
+
+    color:var(--primary-hover);
+
+}
+
+/* ========================================
+   LOGOS
+======================================== */
+
+.img-logo{
+
+    max-width:170px;
+
+    height:auto;
+
+    display:block;
+
+    margin:auto;
+
+    border-radius:20px;
+
+}
+
+.nav-logo{
+
+    width:70px;
+    height:70px;
+
+    border-radius:12px;
+
+    object-fit:cover;
+
+}
+
+/* ========================================
+   BADGES
+======================================== */
+
+.badge-success{
+
+    background:var(--success);
+
+}
+
+.badge-warning{
+
+    background:var(--warning);
+    color:black;
+
+}
+
+.badge-danger{
+
+    background:var(--danger);
+
+}
+
+/* ========================================
+   SCROLLBAR
+======================================== */
+
+::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:var(--primary);
+
+    border-radius:10px;
+
+}
+/* =====================================
+   PASSAGENS
+===================================== */
+
+.page-header h2{
+    font-weight:700;
+}
+
+.custom-card{
+    border:none;
+    border-radius:18px;
+}
+
+.viagem-card{
+    border:none;
+    border-radius:18px;
+    overflow:hidden;
+    transition:.25s;
+}
+
+.viagem-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 8px 25px rgba(0,0,0,.15);
+}
+
+.price-tag{
+    color:#22c55e;
+    font-weight:700;
+}
+
+/* =====================================
+   DARK MODE
+===================================== */
+
+.dark-mode{
+
+    background:#0f172a;
+    color:#f8fafc;
+
+}
+
+.dark-mode .card{
+
+    background:#172033;
+    color:white;
+
+}
+
+.dark-mode .form-control,
+.dark-mode .form-select{
+
+    background:#1e293b;
+    border:1px solid #334155;
+    color:white;
+
+}
+
+.dark-mode .text-muted{
+
+    color:#94a3b8 !important;
+
+}
+
+/* =====================================
+   LIGHT MODE
+===================================== */
+
+.light-mode{
+
+    background:#f8fafc;
+    color:#0f172a;
+
+}
+
+.light-mode .card{
+
+    background:white;
+
+}
+.dark-mode{
+    background:#0f172a;
+    color:white;
+}
+
+.light-mode{
+    background:white;
+    color:#212529;
+}
+
+
+
+.light-mode .nav-link{
+    color:#212529 !important;
+}
+
+.light-mode .navbar-brand{
+    color:#212529 !important;
+}
+
+.light-mode .dropdown-item{
+    color:#212529 !important;
+}
+
+/* =====================================
+   NAVBAR TEMA CLARO
+===================================== */
+
+.light-mode .navbar{
+
+    background:#ffffff !important;
+
+}
+
+.light-mode .navbar-brand,
+.light-mode .nav-link{
+
+    color:#212529 !important;
+
+}
+
+.light-mode .dropdown-menu{
+
+    background:#ffffff;
+
+}
+
+.light-mode .dropdown-item{
+
+    color:#212529;
+
+}
+
+.light-mode .dropdown-item:hover{
+
+    background:#f1f5f9;
+
+}
+/* DASHBOARD LIGHT MODE */
+
+.light-mode .card{
+    background:#ffffff !important;
+    color:#212529 !important;
+}
+
+.light-mode .card-menu{
+    background:#ffffff !important;
+    color:#212529 !important;
+}
+
+.light-mode .card-link{
+    color:#212529 !important;
+}
+
+.light-mode h1,
+.light-mode h2,
+.light-mode h3,
+.light-mode h4,
+.light-mode h5,
+.light-mode h6,
+.light-mode p,
+.light-mode div{
+    color:#212529;
+}
+/* =====================================
+   CADASTRO / LOGIN
+===================================== */
+
+.light-mode .container h2{
+    color:#0f172a;
+}
+
+.dark-mode .container h2{
+    color:#ffffff;
+}
+
+.dark-mode .form-control{
+    background:#1e293b;
+    border:1px solid #334155;
+    color:white;
+}
+
+.dark-mode .form-control::placeholder{
+    color:#94a3b8;
+}
+
+.light-mode .form-control{
+    background:white;
+    color:#212529;
+}
+
+.light-mode .form-control::placeholder{
+    color:#6c757d;
+}

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Login | Transporte Universitário</title>
+
+    <link rel="icon"
+        type="image/x-icon"
+        href="img/Gemini_Generated_Image_69ohf669ohf669oh_1_.ico">
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="row justify-content-center align-items-center min-vh-100">
+
+            <div class="col-11 col-sm-10 col-md-7 col-lg-5">
+
+                <div class="login-box">
+
+                    <div class="text-center mb-4">
+
+                        <img
+                            src="img/Gemini_Generated_Image_69ohf669ohf669oh.png"
+                            alt="Logo"
+                            class="img-logo">
+
+                    </div>
+
+                    <h2 class="text-center fw-bold mb-2">
+                        Transporte Universitário
+                    </h2>
+
+                    <p class="text-center text-secondary mb-4">
+                        Acesse sua conta
+                    </p>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Email
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">
+                                <i class="bi bi-envelope"></i>
+                            </span>
+
+                            <input
+                                id="email"
+                                type="email"
+                                class="form-control"
+                                placeholder="Digite seu email">
+
+                        </div>
+
+                    </div>
+
+                    <div class="mb-4">
+
+                        <label class="form-label">
+                            Senha
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">
+                                <i class="bi bi-lock"></i>
+                            </span>
+
+                            <input
+                                id="senha"
+                                type="password"
+                                class="form-control"
+                                placeholder="Digite sua senha">
+
+                            <button
+                                class="btn btn-outline-secondary"
+                                type="button"
+                                onclick="toggleSenha()">
+
+                                <i class="bi bi-eye"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <button
+                        id="btnLogin"
+                        class="btn btn-primary w-100 mb-2"
+                        onclick="entrar()">
+
+                        Entrar
+
+                    </button>
+
+                    <a
+                        href="cadastro.html"
+                        class="btn btn-outline-primary w-100">
+
+                        Criar Conta
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        function toggleSenha() {
+
+            const campo =
+                document.getElementById('senha');
+
+            campo.type =
+                campo.type === 'password'
+                    ? 'text'
+                    : 'password';
+
+        }
+
+        async function entrar() {
+
+            const email =
+                document.getElementById('email').value.trim();
+
+            const senha =
+                document.getElementById('senha').value;
+
+            if (!email || !senha) {
+
+                alert('Preencha email e senha');
+
+                return;
+
+            }
+
+            const botao =
+                document.getElementById('btnLogin');
+
+            botao.disabled = true;
+
+            botao.innerHTML =
+                '<span class="spinner-border spinner-border-sm"></span> Entrando...';
+
+            try {
+
+                const resposta = await fetch(
+                    'http://localhost:3000/usuarios/login',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            email,
+                            senha
+                        })
+                    }
+                );
+
+                const dados =
+                    await resposta.json();
+                    console.log("DADOS LOGIN:", dados);
+
+                if (dados.erro) {
+
+                    alert(dados.erro);
+
+                    botao.disabled = false;
+
+                    botao.innerHTML =
+                        'Entrar';
+
+                    return;
+
+                }
+
+                localStorage.setItem(
+                    'usuario',
+                    JSON.stringify(dados)
+                );
+
+                /*
+                tema salvo no banco
+                */
+
+                if (dados.tema) {
+
+                    localStorage.setItem(
+                        'tema',
+                        dados.tema
+                    );
+
+                }
+
+                window.location.href =
+                    'dashboard.html';
+
+            } catch (err) {
+
+                alert(
+                    'Não foi possível conectar ao servidor.'
+                );
+
+                botao.disabled = false;
+
+                botao.innerHTML =
+                    'Entrar';
+
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>
