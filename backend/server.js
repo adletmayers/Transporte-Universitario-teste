@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const path = require('path');
 
 require('./config/database');
 
@@ -20,6 +21,11 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 // ROTAS
+app.use(
+    express.static(
+        path.join(__dirname, '../frontend')
+    )
+);
 
 app.use('/rotas', require('./routes/rotas'));
 app.use('/usuarios', require('./routes/usuarios'));
@@ -32,10 +38,9 @@ app.use('/compras', require('./routes/compras'));
 app.use('/admin', require('./routes/admin'));
 
 app.get('/', (req, res) => {
-    res.json({
-        sistema: 'Transporte Universitário',
-        status: 'online'
-    });
+    res.sendFile(
+        path.join(__dirname, '../frontend/index.html')
+    );
 });
 
 app.use((err, req, res, next) => {
