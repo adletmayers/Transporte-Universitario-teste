@@ -267,10 +267,22 @@ router.delete('/viagens/:id', async (req, res) => {
         }
 
         await db.query(
-            `
-            DELETE FROM viagens
-            WHERE id = $1
-            `,
+            'DELETE FROM assentos WHERE viagem_id = $1',
+            [id]
+        );
+
+        await db.query(
+            'DELETE FROM compras WHERE viagem_id = $1',
+            [id]
+        );
+
+        await db.query(
+            'DELETE FROM passagens WHERE viagem_id = $1',
+            [id]
+        );
+
+        await db.query(
+            'DELETE FROM viagens WHERE id = $1',
             [id]
         );
 
@@ -283,7 +295,7 @@ router.delete('/viagens/:id', async (req, res) => {
         console.error(err);
 
         res.status(500).json({
-            erro: 'Erro interno do servidor'
+            erro: err.message
         });
 
     }
