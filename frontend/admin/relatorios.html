@@ -11,103 +11,7 @@
 </head>
 
 <body>
-<nav class="navbar navbar-expand-lg">
-
-<div class="container">
-
-<p class="navbar-brand" id="usuario"></p>
-
-<a class="navbar-brand" href="../dashboard.html">
-    <img src="../img/Adobe Express - file.png" alt="Logo" class="nav-logo">
-    Transporte Universitário
-</a>
-
-<div class="navbar-nav ms-auto">
-
-
-
-<a class="nav-link" href="../dashboard.html">
-Início
-</a>
-
-<a class="nav-link" href="../rotas.html">
-Rotas
-</a>
-
-<a class="nav-link" href="../passagens.html">
-Passagens
-</a>
-
-<a class="nav-link" href="../carteira.html">
-Carteira
-</a>
-
-<a class="nav-link" href="../avisos.html">
-Avisos
-</a>
-
-<a class="nav-link" href="../perfil.html">
-Perfil
-</a>
-
-<a class="nav-link" href="../historico.html">
-Histórico
-</a>
-
-
-
-<li class="nav-item dropdown" id="menuAdmin" style="display:none;">
-
-    <a class="nav-link dropdown-toggle"
-       href="#"
-       role="button"
-       data-bs-toggle="dropdown">
-
-       ⚙ Administração
-
-    </a>
-
-    <ul class="dropdown-menu">
-
-        <li>
-            <a class="dropdown-item"
-               href="../admin/viagens.html">
-               🚍 Viagens
-            </a>
-        </li>
-
-        <li>
-            <a class="dropdown-item"
-               href="../admin/usuarios.html">
-               👥 Usuários
-            </a>
-        </li>
-
-        <li>
-            <a class="dropdown-item"
-               href="../admin/relatorios.html">
-               📊 Relatórios
-            </a>
-        </li>
-
-    </ul>
-
-</li>
-<a class="nav-link" href="../sobre.html">
-Sobre
-</a>
-
-
-
-<a class="nav-link text-warning" href="#" onclick="sair()">
-Sair
-</a>
-
-</div>
-
-</div>
-
-</nav>
+<div id="navbar-container"></div>
 
 <div class="container mt-4">
 
@@ -169,54 +73,10 @@ R$ 0
 
 </div>
 
-<script>
 
-const usuario =
-JSON.parse(
-localStorage.getItem('usuario')
-);
-if(usuario){
-
-document.getElementById('usuario').innerHTML =
-`Olá ${usuario.nome} 👋`;
-
-}
-if(usuario && usuario.tipo === 'ADMIN'){
-
-    document.getElementById(
-        'menuAdmin'
-    ).style.display = 'block';
-
-}
-
-async function carregar(){
-
-    const resposta =
-    await fetch(
-    '/admin/relatorios'
-    );
-
-    const dados =
-    await resposta.json();
-
-    document.getElementById('usuarios').innerHTML =
-    dados.usuarios;
-
-    document.getElementById('viagens').innerHTML =
-    dados.viagens;
-
-    document.getElementById('compras').innerHTML =
-    dados.compras;
-
-    document.getElementById('faturamento').innerHTML =
-    `R$ ${dados.faturamento}`;
-
-}
-
-carregar();
-
-</script>
 <script src="../js/tema.js"></script>
+<script src="../js/components.js"></script>
+<script src="../js/relatorios.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </body>
