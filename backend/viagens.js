@@ -14,8 +14,8 @@ async function salvar(){
     console.log('ID edição:', viagemId);
 
     const url = viagemId
-    ? `http://localhost:3000/admin/viagens/${viagemId}`
-    : 'http://localhost:3000/admin/viagens';
+    ? `/admin/viagens/${viagemId}`
+    : '/admin/viagens';
 
     const metodo = viagemId
     ? 'PUT'
@@ -121,7 +121,7 @@ async function carregarViagens(){
 
         const resposta =
         await fetch(
-        'http://localhost:3000/admin/viagens'
+        '/admin/viagens'
         );
 
         const viagens =
@@ -219,7 +219,7 @@ async function excluirViagem(id){
     const resposta =
     await fetch(
 
-        `http://localhost:3000/admin/viagens/${id}`,
+        `/admin/viagens/${id}`,
 
         {
             method:'DELETE'
@@ -243,7 +243,7 @@ async function editarViagem(id){
 
         const resposta =
         await fetch(
-            `http://localhost:3000/admin/viagens/${id}`
+            `/admin/viagens/${id}`
         );
 
         const viagem =
