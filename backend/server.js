@@ -4,7 +4,6 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const path = require('path');
 
 require('./config/database');
 
@@ -21,11 +20,6 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 // ROTAS
-app.use(
-    express.static(
-        path.join(__dirname, '../frontend')
-    )
-);
 
 app.use('/rotas', require('./routes/rotas'));
 app.use('/usuarios', require('./routes/usuarios'));
@@ -36,11 +30,20 @@ app.use('/passagens', require('./routes/passagens'));
 app.use('/assentos', require('./routes/assentos'));
 app.use('/compras', require('./routes/compras'));
 app.use('/admin', require('./routes/admin'));
+app.use(
+    '/localizacao',
+    require('./routes/localizacao')
+);
+app.use(
+    '/carteirinha',
+    require('./routes/carteirinha')
+);
 
 app.get('/', (req, res) => {
-    res.sendFile(
-        path.join(__dirname, '../frontend/index.html')
-    );
+    res.json({
+        sistema: 'Transporte Universitário',
+        status: 'online'
+    });
 });
 
 app.use((err, req, res, next) => {
