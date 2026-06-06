@@ -24,7 +24,7 @@ async function cadastrar(){
 
     const resposta =
     await fetch(
-    'http://localhost:3000/usuarios',
+    '/usuarios',
     {
         method:'POST',
 
