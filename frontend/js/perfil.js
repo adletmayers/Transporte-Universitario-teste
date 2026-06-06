@@ -212,7 +212,7 @@ async function salvarPerfil(){
     const resposta =
     await fetch(
 
-        `http://localhost:3000/usuarios/${usuario.id}`,
+        `/usuarios/${usuario.id}`,
 
         {
 
@@ -378,7 +378,7 @@ async function salvarSenha(){
     const resposta =
     await fetch(
 
-        'http://localhost:3000/usuarios/alterar-senha',
+        '/usuarios/alterar-senha',
 
         {
 
@@ -442,7 +442,7 @@ async function alterarTema(){
 
         await fetch(
 
-            `http://localhost:3000/usuarios/${usuario.id}`,
+            `/usuarios/${usuario.id}`,
 
             {
 
