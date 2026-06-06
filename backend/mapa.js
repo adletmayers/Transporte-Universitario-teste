@@ -32,7 +32,7 @@ async function atualizar(){
 
         const resposta =
         await fetch(
-            'http://localhost:3000/localizacao/1'
+            '/localizacao/1'
         );
 
         const dados =
