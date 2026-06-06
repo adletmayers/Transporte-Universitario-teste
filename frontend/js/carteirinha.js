@@ -1,6 +1,6 @@
 const usuario =
 JSON.parse(
-localStorage.getItem('usuario')
+Storage.getItem('usuario')
 );
 
 
@@ -11,7 +11,7 @@ async function carregarCarteirinha(){
 
         const resposta =
         await fetch(
-            `http://localhost:3000/carteirinha/${usuario.id}`
+            `/carteirinha/${usuario.id}`
         );
 
         const dados =
@@ -58,7 +58,7 @@ async function carregarCarteirinha(){
         ?
         new Date(
             dados.validade_carteirinha
-        ).toLocaleDateString('pt-BR')
+        ).toeDateString('pt-BR')
         :
         '-';
 
