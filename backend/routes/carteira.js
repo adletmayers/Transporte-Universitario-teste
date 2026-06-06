@@ -55,6 +55,36 @@ router.get('/saldo/:usuarioId', async (req, res) => {
     }
 
 });
+router.get('/movimentacoes/:usuarioId', async (req, res) => {
+
+    try {
+
+        const { usuarioId } = req.params;
+
+        const resultado = await db.query(
+            `
+            SELECT *
+            FROM movimentacoes_carteira
+            WHERE usuario_id = $1
+            ORDER BY created_at DESC
+            `,
+            [usuarioId]
+        );
+
+        res.json(resultado.rows);
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        res.status(500).json({
+            erro: 'Erro interno do servidor'
+        });
+
+    }
+
+});
+
 router.get('/:usuarioId', async (req, res) => {
 
     try {
@@ -144,6 +174,28 @@ router.post('/recarga', async (req, res) => {
             ]
         );
 
+        // REGISTRA MOVIMENTAÇÃO
+        await db.query(
+            `
+            INSERT INTO movimentacoes_carteira
+            (
+                usuario_id,
+                tipo,
+                valor
+            )
+            VALUES
+            (
+                $1,
+                'RECARGA',
+                $2
+            )
+            `,
+            [
+                usuario_id,
+                valor
+            ]
+        );
+
         res.json({
             mensagem: 'Recarga realizada com sucesso'
         });
@@ -159,7 +211,6 @@ router.post('/recarga', async (req, res) => {
     }
 
 });
-
 /*
 ========================================
 DEBITAR SALDO
@@ -205,29 +256,37 @@ router.post('/debito', async (req, res) => {
 
         await db.query(
             `
-            INSERT INTO carteiras
+            UPDATE carteiras
+            SET saldo = saldo - $1
+            WHERE usuario_id = $2
+            `,
+            [
+                valor,
+                usuario_id
+            ]
+        );
+
+        // REGISTRA MOVIMENTAÇÃO
+        await db.query(
+            `
+            INSERT INTO movimentacoes_carteira
             (
                 usuario_id,
-                saldo
+                tipo,
+                valor
             )
             VALUES
             (
                 $1,
+                'DEBITO',
                 $2
             )
-
-            ON CONFLICT(usuario_id)
-
-            DO UPDATE SET
-
-            saldo =
-            carteiras.saldo + EXCLUDED.saldo
             `,
             [
                 usuario_id,
                 valor
             ]
-            );
+        );
 
         res.json({
             mensagem: 'Débito realizado com sucesso'
@@ -244,5 +303,11 @@ router.post('/debito', async (req, res) => {
     }
 
 });
+/*
+========================================
+HISTÓRICO DA CARTEIRA
+========================================
+*/
+
 
 module.exports = router;

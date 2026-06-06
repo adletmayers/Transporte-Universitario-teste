@@ -14,12 +14,24 @@ router.post('/', async (req, res) => {
 
     try {
 
-        const { nome, email, senha } = req.body;
+        const {
+            nome,
+            email,
+            senha,
+            matricula,
+            universidade,
+            curso,
+            turno
+        } = req.body;
 
-        if (!nome || !email || !senha) {
+        if (
+            !nome ||
+            !email ||
+            !senha
+        ) {
 
             return res.status(400).json({
-                erro: 'Preencha todos os campos'
+                erro: 'Preencha os campos obrigatórios'
             });
 
         }
@@ -33,7 +45,11 @@ router.post('/', async (req, res) => {
         }
 
         const existe = await db.query(
-            'SELECT id FROM usuarios WHERE email = $1',
+            `
+            SELECT id
+            FROM usuarios
+            WHERE email = $1
+            `,
             [email]
         );
 
@@ -56,22 +72,35 @@ router.post('/', async (req, res) => {
             (
                 nome,
                 email,
-                senha
+                senha,
+                matricula,
+                universidade,
+                curso,
+                turno
             )
             VALUES
             (
                 $1,
                 $2,
-                $3
+                $3,
+                $4,
+                $5,
+                $6,
+                $7
             )
             RETURNING id
             `,
             [
                 nome,
                 email,
-                hash
+                hash,
+                matricula || null,
+                universidade || null,
+                curso || null,
+                turno || null
             ]
-            );
+        );
+
         await db.query(
             `
             INSERT INTO carteiras
@@ -88,7 +117,7 @@ router.post('/', async (req, res) => {
             [
                 novoUsuario.rows[0].id
             ]
-            );    
+        );
 
         res.status(201).json({
             mensagem: 'Cadastro realizado com sucesso'
@@ -105,7 +134,6 @@ router.post('/', async (req, res) => {
     }
 
 });
-
 /*
 ========================================
 LOGIN
@@ -157,15 +185,24 @@ router.post('/login', async (req, res) => {
         }
 
         res.json({
-               id: usuario.rows[0].id,
-                nome: usuario.rows[0].nome,
-                email: usuario.rows[0].email,
-                cpf: usuario.rows[0].cpf,
-                data_nascimento: usuario.rows[0].data_nascimento,
-                tipo: usuario.rows[0].tipo || 'ALUNO',
-                tema: usuario.rows[0].tema || 'dark',
-                saldo: usuario.rows[0].saldo || 0
-        });
+    id: usuario.rows[0].id,
+    nome: usuario.rows[0].nome,
+    email: usuario.rows[0].email,
+    cpf: usuario.rows[0].cpf,
+    data_nascimento: usuario.rows[0].data_nascimento,
+
+    matricula: usuario.rows[0].matricula,
+    universidade: usuario.rows[0].universidade,
+    curso: usuario.rows[0].curso,
+    turno: usuario.rows[0].turno,
+    validade_carteirinha:
+        usuario.rows[0].validade_carteirinha,
+
+    tipo: usuario.rows[0].tipo || 'ALUNO',
+    tema: usuario.rows[0].tema || 'dark',
+    saldo: usuario.rows[0].saldo || 0,
+    foto_perfil: usuario.rows[0].foto_perfil
+});
 
     } catch (err) {
 
@@ -287,7 +324,12 @@ router.put('/:id', async (req, res) => {
             email,
             cpf,
             data_nascimento,
-            tema
+            tema,
+            matricula,
+            universidade,
+            curso,
+            turno,
+            validade_carteirinha
         } = req.body;
 
         const verificaEmail = await db.query(
@@ -312,25 +354,35 @@ router.put('/:id', async (req, res) => {
         }
 
         await db.query(
-    `
-    UPDATE usuarios
-    SET
-        nome = $1,
-        email = $2,
-        cpf = $3,
-        data_nascimento = $4,
-        tema = $5
-    WHERE id = $6
-    `,
-    [
-        nome,
-        email,
-        cpf,
-        data_nascimento,
-        tema || 'dark',
-        id
-    ]
-);
+            `
+            UPDATE usuarios
+            SET
+                nome = $1,
+                email = $2,
+                cpf = $3,
+                data_nascimento = $4,
+                tema = $5,
+                matricula = $6,
+                universidade = $7,
+                curso = $8,
+                turno = $9,
+                validade_carteirinha = $10
+            WHERE id = $11
+            `,
+            [
+                nome,
+                email,
+                cpf,
+                data_nascimento,
+                tema || 'dark',
+                matricula,
+                universidade,
+                curso,
+                turno,
+                validade_carteirinha,
+                id
+            ]
+        );
 
         res.json({
             mensagem: 'Perfil atualizado com sucesso'
@@ -363,17 +415,22 @@ router.get('/:id', async (req, res) => {
         const usuario = await db.query(
             `
             SELECT
-                id,
-                nome,
-                email,
-                cpf,
-                data_nascimento,
-                tipo,
-                tema,
-                saldo,
-                foto_perfil
-            FROM usuarios
-            WHERE id = $1
+            id,
+            nome,
+            email,
+            cpf,
+            data_nascimento,
+            matricula,
+            universidade,
+            curso,
+            turno,
+            validade_carteirinha,
+            tipo,
+            tema,
+            saldo,
+            foto_perfil
+        FROM usuarios
+        WHERE id = $1
             `,
             [id]
         );
