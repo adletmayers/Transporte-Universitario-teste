@@ -136,19 +136,47 @@ Sair
 Cadastrar Viagem
 </h2>
 
-<input id="origem" class="form-control mb-2" placeholder="Origem">
+<label class="form-label">Origem</label>
+<input
+id="origem"
+class="form-control mb-3"
+placeholder="Origem">
 
-<input id="destino" class="form-control mb-2" placeholder="Destino">
+<label class="form-label">Destino</label>
+<input
+id="destino"
+class="form-control mb-3"
+placeholder="Destino">
 
-<input id="data" type="date" class="form-control mb-2">
+<label class="form-label">Data da viagem</label>
+<input
+id="data"
+type="date"
+class="form-control mb-3">
 
-<input id="saida" type="time" class="form-control mb-2">
+<label class="form-label">Horário de saída</label>
+<input
+id="saida"
+type="time"
+class="form-control mb-3">
 
-<input id="chegada" type="time" class="form-control mb-2">
+<label class="form-label">Horário de chegada</label>
+<input
+id="chegada"
+type="time"
+class="form-control mb-3">
 
-<input id="valor" type="number" class="form-control mb-2">
+<label class="form-label">Valor da passagem (R$)</label>
+<input
+id="valor"
+type="number"
+class="form-control mb-3">
 
-<input id="vagas" type="number" class="form-control mb-2">
+<label class="form-label">Quantidade de vagas</label>
+<input
+id="vagas"
+type="number"
+class="form-control mb-3">
 
 <button
 id="btnSalvar"
@@ -197,8 +225,8 @@ async function salvar(){
     console.log('ID edição:', viagemId);
 
     const url = viagemId
-    ? `/admin/viagens/${viagemId}`
-    : '/admin/viagens';
+    ? `http://localhost:3000/admin/viagens/${viagemId}`
+    : 'http://localhost:3000/admin/viagens';
 
     const metodo = viagemId
     ? 'PUT'
@@ -311,7 +339,7 @@ async function carregarViagens(){
 
         const resposta =
         await fetch(
-        '/admin/viagens'
+        'http://localhost:3000/admin/viagens'
         );
 
         const viagens =
@@ -409,7 +437,7 @@ async function excluirViagem(id){
     const resposta =
     await fetch(
 
-        `/admin/viagens/${id}`,
+        `http://localhost:3000/admin/viagens/${id}`,
 
         {
             method:'DELETE'
@@ -433,7 +461,7 @@ async function editarViagem(id){
 
         const resposta =
         await fetch(
-            `/admin/viagens/${id}`
+            `http://localhost:3000/admin/viagens/${id}`
         );
 
         const viagem =
