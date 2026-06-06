@@ -13,7 +13,7 @@ async function carregarUsuarios(){
 
         const resposta =
         await fetch(
-            'http://localhost:3000/admin/usuarios'
+            '/admin/usuarios'
         );
 
         const usuarios =
@@ -79,7 +79,7 @@ async function promover(id){
     const resposta =
     await fetch(
 
-        `http://localhost:3000/admin/usuarios/${id}/admin`,
+        `/admin/usuarios/${id}/admin`,
 
         {
             method:'PUT'
@@ -114,7 +114,7 @@ async function excluir(id){
     const resposta =
     await fetch(
 
-        `http://localhost:3000/admin/usuarios/${id}`,
+        `/admin/usuarios/${id}`,
 
         {
             method:'DELETE'
