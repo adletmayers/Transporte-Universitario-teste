@@ -8,7 +8,7 @@ async function carregar(){
 
     const resposta =
     await fetch(
-    'http://localhost:3000/admin/relatorios'
+    '/admin/relatorios'
     );
 
     const dados =
