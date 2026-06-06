@@ -41,7 +41,7 @@ async function pagar(){
 
     const saldoResp =
     await fetch(
-        `http://localhost:3000/carteira/saldo/${usuario.id}`
+        `/carteira/saldo/${usuario.id}`
     );
 
     const saldoDados =
@@ -52,7 +52,7 @@ async function pagar(){
 
     const respostaViagem =
     await fetch(
-        'http://localhost:3000/passagens'
+        '/passagens'
     );
 
     const viagens =
@@ -116,7 +116,7 @@ async function pagar(){
 
         const respostaViagem =
         await fetch(
-            'http://localhost:3000/passagens'
+            '/passagens'
         );
 
         const viagens =
@@ -138,7 +138,7 @@ async function pagar(){
         const resposta =
         await fetch(
 
-            'http://localhost:3000/compras',
+            '/compras',
 
             {
 
