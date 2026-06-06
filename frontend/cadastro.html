@@ -26,7 +26,49 @@
         <input id="email" class="form-control mb-2" placeholder="Email">
 
         <input id="senha" type="password" class="form-control mb-3" placeholder="Senha">
+        <input id="matricula"
+class="form-control mb-2"
+placeholder="Matrícula">
 
+<input id="universidade"
+class="form-control mb-2"
+placeholder="Universidade">
+
+<input id="curso"
+class="form-control mb-2"
+placeholder="Curso">
+
+<select
+id="turno"
+class="form-control mb-3">
+
+    <option value="">
+        Selecione o turno
+    </option>
+
+    <option value="MANHÃ">
+        Manhã
+    </option>
+
+    <option value="TARDE">
+        Tarde
+    </option>
+
+    <option value="NOITE">
+        Noite
+    </option>
+
+</select>
+
+<input id="periodo" class="form-control mb-2" placeholder="Período/Semestre">
+
+<label class="form-label">
+Validade da Carteirinha
+</label>
+<input
+id="validade_carteirinha"
+type="date"
+class="form-control mb-3">
         <button class="btn btn-success mb-2" onclick="cadastrar()">
             Cadastrar
         </button>
@@ -39,65 +81,10 @@
 
 </div>
 
-<script>
 
-
-async function cadastrar(){
-
-    const nome =
-    document.getElementById('nome').value;
-
-    const email =
-    document.getElementById('email').value;
-
-    const senha =
-    document.getElementById('senha').value;
-
-    const resposta =
-    await fetch(
-    '/usuarios',
-    {
-        method:'POST',
-        headers:{
-            'Content-Type':'application/json'
-        },
-        body:JSON.stringify({
-            nome,
-            email,
-            senha
-        })
-    });
-
-    const dados =
-    await resposta.json();
-
-    if(dados.erro){
-
-        alert(dados.erro);
-        return;
-
-    }
-
-    alert('Cadastro realizado!');
-
-  alert('Cadastro realizado com sucesso!');
-
-  window.location.href =
-  'index.html';
-
-}
-function sair(){
-
-    localStorage.removeItem(
-    'usuario'
-    );
-
-    window.location.href =
-    'index.html';
-
-}
-</script>
 
 <script src="js/tema.js"></script>
+<script src="js/cadastro.js"></script>
 </body>
 </html>
+
