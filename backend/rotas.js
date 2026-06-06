@@ -7,7 +7,7 @@ localStorage.getItem('usuario')
 
 
 fetch(
-'http://localhost:3000/rotas'
+'/rotas'
 )
 .then(r => r.json())
 .then(dados => {
