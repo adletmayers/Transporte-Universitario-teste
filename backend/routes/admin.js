@@ -20,8 +20,20 @@ router.post('/viagens', async (req, res) => {
             horario_saida,
             horario_chegada,
             valor,
-            vagas
+            vagas,
+            vagas_totais
         } = req.body;
+
+        console.log('BODY:', req.body);
+
+        // aceita tanto vagas quanto vagas_totais
+        const quantidadeVagas = Number(
+            vagas ?? vagas_totais
+        );
+
+        console.log('VAGAS:', vagas);
+        console.log('VAGAS_TOTAIS:', vagas_totais);
+        console.log('QUANTIDADE:', quantidadeVagas);
 
         if (
             !origem ||
@@ -33,6 +45,18 @@ router.post('/viagens', async (req, res) => {
 
             return res.status(400).json({
                 erro: 'Preencha todos os campos obrigatórios'
+            });
+
+        }
+
+        if (
+            isNaN(quantidadeVagas) ||
+            quantidadeVagas <= 0
+        ) {
+
+            return res.status(400).json({
+                erro: 'Quantidade de vagas inválida',
+                recebido: req.body
             });
 
         }
@@ -64,41 +88,68 @@ router.post('/viagens', async (req, res) => {
                 horario_saida,
                 horario_chegada,
                 valor || 0,
-                vagas || 0
+                quantidadeVagas
             ]
         );
 
-        res.status(201).json(resultado.rows[0]);
+        const novaViagem = resultado.rows[0];
+
+        // gera os assentos automaticamente
+        for (let i = 1; i <= quantidadeVagas; i++) {
+
+            await db.query(
+                `
+                INSERT INTO assentos
+                (
+                    viagem_id,
+                    numero,
+                    ocupado
+                )
+                VALUES
+                (
+                    $1,
+                    $2,
+                    FALSE
+                )
+                `,
+                [
+                    novaViagem.id,
+                    i
+                ]
+            );
+
+        }
+
+        res.status(201).json({
+            mensagem: 'Viagem criada com sucesso',
+            viagem: novaViagem
+        });
 
     } catch (err) {
 
         console.error(err);
 
         res.status(500).json({
-            erro: 'Erro interno do servidor'
+            erro: err.message
         });
 
     }
 
 });
-
 /*
 ========================================
-LISTAR VIAGENS
+BUSCAR VIAGEM
 ========================================
 */
-
 router.get('/viagens', async (req, res) => {
 
     try {
 
-        const resultado = await db.query(
-            `
+        const resultado = await db.query(`
             SELECT *
             FROM viagens
             ORDER BY data_ida
-            `
-        );
+        `);
 
         res.json(resultado.rows);
 
@@ -113,13 +164,6 @@ router.get('/viagens', async (req, res) => {
     }
 
 });
-
-/*
-========================================
-BUSCAR VIAGEM
-========================================
-*/
-
 router.get('/viagens/:id', async (req, res) => {
 
     try {
@@ -301,7 +345,6 @@ router.delete('/viagens/:id', async (req, res) => {
     }
 
 });
-
 /*
 ========================================
 LISTAR USUÁRIOS
