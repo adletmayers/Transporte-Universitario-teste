@@ -33,7 +33,7 @@ async function carregarCidades(){
 
         const respostaOrigens =
         await fetch(
-        'http://localhost:3000/passagens/origens/lista'
+        '/passagens/origens/lista'
         );
 
         const origens =
@@ -43,7 +43,7 @@ async function carregarCidades(){
 
         const respostaDestinos =
         await fetch(
-        'http://localhost:3000/passagens/destinos/lista'
+        '/passagens/destinos/lista'
         );
 
         const destinos =
@@ -110,7 +110,7 @@ async function buscar(){
     try{
 
         let url =
-`http://localhost:3000/passagens/buscar/filtro?origem=${origem}&destino=${destino}`;
+`/passagens/buscar/filtro?origem=${origem}&destino=${destino}`;
 
         if(data){
 
