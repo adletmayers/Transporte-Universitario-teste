@@ -20,7 +20,7 @@ async function carregarAvisos(){
 
         const resposta =
         await fetch(
-        'http://localhost:3000/avisos'
+        '/avisos'
         );
 
         const avisos =
@@ -60,7 +60,7 @@ async function carregarSaldo(){
 
         const resposta =
         await fetch(
-            `http://localhost:3000/carteira/saldo/${usuario.id}`
+            `/carteira/saldo/${usuario.id}`
         );
 
         const dados =
