@@ -38,7 +38,7 @@
             try {
 
                 const resposta = await fetch(
-                    'http://localhost:3000/usuarios/login',
+                    '/usuarios/login',
                     {
                         method: 'POST',
                         headers: {
