@@ -13,7 +13,7 @@ async function carregarHistorico(){
 
         const resposta =
         await fetch(
-            `http://localhost:3000/compras/${usuario.id}`
+            `/compras/${usuario.id}`
         );
 
         const compras =
@@ -190,7 +190,7 @@ async function cancelarCompra(id){
         const resposta =
         await fetch(
 
-            `http://localhost:3000/compras/${id}`,
+            `/compras/${id}`,
 
             {
                 method:'DELETE'
