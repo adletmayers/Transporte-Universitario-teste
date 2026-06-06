@@ -29,122 +29,9 @@ href="css/style.css">
 </head>
 
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<div id="navbar-container"></div>
 
-<div class="container">
 
-<p class="navbar-brand mb-0" id="usuario"></p>
-
-<a class="navbar-brand" href="dashboard.html">
-    <img src="img/Adobe Express - file.png" alt="Logo" class="nav-logo">
-    Transporte Universitário
-</a>
-
-<div class="navbar-nav ms-auto">
-
-<a class="nav-link" href="dashboard.html">
-Início
-</a>
-
-<a class="nav-link" href="rotas.html">
-Rotas
-</a>
-
-<a class="nav-link" href="passagens.html">
-Passagens
-</a>
-
-<a class="nav-link" href="carteira.html">
-Carteira
-</a>
-
-<a class="nav-link" href="avisos.html">
-Avisos
-</a>
-
-<a class="nav-link active" href="perfil.html">
-Perfil
-</a>
-
-<a class="nav-link" href="historico.html">
-Histórico
-</a>
-
-<li
-class="nav-item dropdown"
-id="menuAdmin"
-style="display:none; list-style:none;">
-
-<a
-class="nav-link dropdown-toggle"
-href="#"
-role="button"
-data-bs-toggle="dropdown">
-
-⚙ Administração
-
-</a>
-
-<ul class="dropdown-menu">
-
-<li>
-
-<a
-class="dropdown-item"
-href="admin/viagens.html">
-
-🚍 Viagens
-
-</a>
-
-</li>
-
-<li>
-
-<a
-class="dropdown-item"
-href="admin/usuarios.html">
-
-👥 Usuários
-
-</a>
-
-</li>
-
-<li>
-
-<a
-class="dropdown-item"
-href="admin/relatorios.html">
-
-📊 Relatórios
-
-</a>
-
-</li>
-
-</ul>
-
-</li>
-
-<a class="nav-link" href="sobre.html">
-Sobre
-</a>
-
-<a
-class="nav-link text-warning"
-href="#"
-onclick="sair()">
-
-Sair
-
-</a>
-
-</div>
-
-</div>
-
-</nav>
 
 
 
@@ -168,8 +55,8 @@ Bem-vindo ao sistema de transporte.
 💳 Carteira Digital
 </h6>
 
-<h2 id="saldoCarteira">
-R$ 0,00
+<h2 id="saldo">
+
 </h2>
 
 </div>
@@ -201,7 +88,17 @@ Carregando...
 </div>
 
 </div>
+<a href="mapa.html" class="card-link">
 
+<div class="card card-menu p-4 text-center">
+
+<h3>🗺️</h3>
+
+<h6>Mapa</h6>
+
+</div>
+
+</a>
 <div class="row">
 
 <div class="col-6 mb-3">
@@ -261,14 +158,14 @@ class="card-link">
 <div class="col-6 mb-3">
 
 <a
-href="avisos.html"
+href="carteirinha.html"
 class="card-link">
 
 <div class="card card-menu p-4 text-center">
 
-<h3>🔔</h3>
+<h3>🪪</h3>
 
-<h6>Avisos</h6>
+<h6>Carteirinha</h6>
 
 </div>
 
@@ -280,96 +177,13 @@ class="card-link">
 
 </div>
 
-<script>
 
-const usuario =
-JSON.parse(
-localStorage.getItem('usuario')
-);
-
-if(!usuario){
-
-    window.location.href =
-    'index.html';
-
-}
-
-
-document.getElementById(
-'nomeUsuario'
-).innerHTML =
-`Olá ${usuario.nome} 👋`;
-
-if(
-usuario.tipo === 'ADMIN'
-){
-
-document.getElementById(
-'menuAdmin'
-).style.display =
-'block';
-
-}
-
-async function carregarAvisos(){
-
-    try{
-
-        const resposta =
-        await fetch(
-        '/avisos'
-        );
-
-        const avisos =
-        await resposta.json();
-
-        let html = '';
-
-        avisos
-        .slice(0,3)
-        .forEach(aviso=>{
-
-            html += `
-            <div class="mb-2">
-                🔹 ${aviso.titulo || aviso.mensagem}
-            </div>
-            `;
-
-        });
-
-        document.getElementById(
-        'avisosRecentes'
-        ).innerHTML = html;
-
-    }catch{
-
-        document.getElementById(
-        'avisosRecentes'
-        ).innerHTML =
-        'Erro ao carregar avisos';
-
-    }
-
-}
-
-function sair(){
-
-localStorage.removeItem(
-'usuario'
-);
-
-window.location.href =
-'index.html';
-
-}
-
-carregarAvisos();
-
-</script>
 
 <script
 src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
 </script>
 <script src="js/tema.js"></script>
+<script src="js/components.js"></script>
+<script src="js/dashboard.js"></script>
 </body>
 </html>
