@@ -38,7 +38,7 @@ async function carregarViagem(){
 
         const resposta =
         await fetch(
-        'http://localhost:3000/passagens'
+        '/passagens'
         );
 
         const viagens =
@@ -113,7 +113,7 @@ async function carregarAssentos(){
 
         const resposta =
         await fetch(
-        `http://localhost:3000/assentos/viagem/${viagemId}`
+        `/assentos/viagem/${viagemId}`
         );
 
         console.log('Status:', resposta.status);
