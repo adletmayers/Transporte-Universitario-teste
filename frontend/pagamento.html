@@ -22,22 +22,26 @@
         <p>Escolha a forma de pagamento</p>
 
         <select
-            id="forma"
-            class="form-select mb-3">
+    id="forma"
+    class="form-select mb-3">
 
-            <option value="PIX">
-                PIX
-            </option>
+    <option value="CARTEIRA">
+        💳 Carteira Digital
+    </option>
 
-            <option value="Cartão">
-                Cartão
-            </option>
+    <option value="PIX">
+        PIX
+    </option>
 
-            <option value="Boleto">
-                Boleto
-            </option>
+    <option value="Cartão">
+        Cartão
+    </option>
 
-        </select>
+    <option value="Boleto">
+        Boleto
+    </option>
+
+</select>
 
         <div id="mensagem"></div>
 
@@ -54,214 +58,9 @@
 
 </div>
 
-<script>
 
-const usuario =
-JSON.parse(
-    localStorage.getItem('usuario')
-);
-
-if(!usuario){
-
-    alert('Faça login primeiro');
-
-    window.location.href =
-    'index.html';
-
-}
-if(!usuario?.id){
-
-    alert('Faça login novamente');
-
-    localStorage.removeItem('usuario');
-
-    window.location.href = 'index.html';
-
-}
-async function pagar(){
-
-    const viagemId =
-    localStorage.getItem(
-        'viagemSelecionada'
-    );
-
-    const assento =
-    localStorage.getItem(
-        'assentoSelecionado'
-    );
-
-    const forma =
-    document.getElementById(
-        'forma'
-    ).value;
-
-    if(!viagemId){
-
-        alert(
-            'Nenhuma viagem selecionada'
-        );
-
-        return;
-
-    }
-
-    if(!assento){
-
-        alert(
-            'Nenhum assento selecionado'
-        );
-
-        return;
-
-    }
-
-    const botao =
-    document.getElementById(
-        'btnPagar'
-    );
-
-    botao.disabled = true;
-
-    document.getElementById(
-        'mensagem'
-    ).innerHTML =
-
-    `
-    <div class="alert alert-info">
-        Processando pagamento...
-    </div>
-    `;
-
-    try{
-
-        const respostaViagem =
-        await fetch(
-            '/passagens'
-        );
-
-        const viagens =
-        await respostaViagem.json();
-
-        const viagem =
-        viagens.find(
-            v => v.id == viagemId
-        );
-
-        if(!viagem){
-
-            throw new Error(
-                'Viagem não encontrada'
-            );
-
-        }
-
-        const resposta =
-        await fetch(
-
-            '/compras',
-
-            {
-
-                method:'POST',
-
-                headers:{
-                    'Content-Type':
-                    'application/json'
-                },
-
-                body:JSON.stringify({
-
-                    usuario_id:
-                    usuario.id,
-
-                    viagem_id:
-                    viagemId,
-
-                    assento_numero:
-                    assento,
-
-                    valor:
-                    viagem.valor,
-
-                    forma_pagamento:
-                    forma
-
-                })
-
-            }
-
-        );
-
-        const dados =
-        await resposta.json();
-
-        if(dados.erro){
-
-            document.getElementById(
-                'mensagem'
-            ).innerHTML =
-
-            `
-            <div class="alert alert-danger">
-                ${dados.erro}
-            </div>
-            `;
-
-            botao.disabled = false;
-
-            return;
-
-        }
-
-        localStorage.setItem(
-
-            'ultimaCompra',
-
-            JSON.stringify({
-
-                viagem,
-                assento,
-                forma,
-                dataCompra:
-                new Date()
-
-            })
-
-        );
-
-        localStorage.removeItem(
-            'viagemSelecionada'
-        );
-
-        localStorage.removeItem(
-            'assentoSelecionado'
-        );
-
-        window.location.href =
-        'confirmacao.html';
-
-    }catch(err){
-
-        console.error(err);
-
-        document.getElementById(
-            'mensagem'
-        ).innerHTML =
-
-        `
-        <div class="alert alert-danger">
-            Erro ao processar pagamento.
-        </div>
-        `;
-
-        botao.disabled = false;
-
-    }
-
-}
-
-</script>
 <script src="js/tema.js"></script>
+<script src="js/pagamento.js"></script>
 </body>
 
 </html>
