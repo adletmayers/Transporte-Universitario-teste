@@ -1,161 +1,108 @@
 const usuario =
 JSON.parse(
-    localStorage.getItem('usuario')
+localStorage.getItem('usuario')
 );
 
 
 
-
-
-async function carregarSaldo(){
+async function carregarCarteirinha(){
 
     try{
 
         const resposta =
         await fetch(
-            `/carteira/saldo/${usuario.id}`
+            `/carteirinha/${usuario.id}`
         );
 
         const dados =
         await resposta.json();
+        console.log(dados);
 
-        document.getElementById('saldo').innerHTML =
-        `Saldo: R$ ${Number(dados.saldo).toFixed(2)}`;
+        if(dados.erro){
 
-    }catch(err){
-
-        console.error(err);
-
-    }
-
-}
-
-async function carregarHistorico(){
-
-    try{
-
-        const resposta =
-        await fetch(
-            `/carteira/movimentacoes/${usuario.id}`
-        );
-
-        const movimentacoes =
-        await resposta.json();
-
-        console.log(movimentacoes);
-
-        if(movimentacoes.length === 0){
-
-            document.getElementById(
-                'historico'
-            ).innerHTML =
-            '<p>Nenhuma movimentação encontrada.</p>';
+            alert(dados.erro);
 
             return;
 
         }
 
-        let html = '';
-
-        movimentacoes.forEach(m => {
-
-            const cor =
-            m.tipo === 'RECARGA'
-            ? 'text-success'
-            : 'text-danger';
-
-            html += `
-            <div class="card p-2 mb-2">
-
-                <strong class="${cor}">
-                    ${m.tipo}
-                </strong>
-
-                <br>
-
-                R$ ${Number(m.valor).toFixed(2)}
-
-                <br>
-
-                <small>
-                    ${new Date(m.created_at)
-                        .toLocaleString('pt-BR')}
-                </small>
-
-            </div>
-            `;
-
-        });
+        document.getElementById(
+            'nome'
+        ).innerText =
+        dados.nome || '-';
 
         document.getElementById(
-            'historico'
-        ).innerHTML = html;
+            'matricula'
+        ).innerText =
+        dados.matricula || '-';
 
-    }catch(err){
+        document.getElementById(
+            'curso'
+        ).innerText =
+        dados.curso || '-';
 
-        console.error(err);
+        document.getElementById(
+            'instituicao'
+        ).innerText =
+        dados.universidade || '-';
 
-    }
+        document.getElementById(
+            'turno'
+        ).innerText =
+        dados.turno || '-';
 
-}
+        document.getElementById(
+            'validade'
+        ).innerText =
+        dados.validade_carteirinha
+        ?
+        new Date(
+            dados.validade_carteirinha
+        ).toLocaleDateString('pt-BR')
+        :
+        '-';
 
-async function recarregar(){
+        if(dados.foto_perfil){
 
-    const valor =
-    document.getElementById(
-        'valorRecarga'
-    ).value;
+            document.getElementById(
+                'fotoAluno'
+            ).src =
+            dados.foto_perfil;
 
-    if(!valor){
+        }
 
-        alert('Informe um valor');
+        new QRCode(
 
-        return;
+            document.getElementById(
+                'qrcode'
+            ),
 
-    }
-
-    try{
-
-        const resposta =
-        await fetch(
-            '/carteira/recarga',
             {
-                method:'POST',
-                headers:{
-                    'Content-Type':
-                    'application/json'
-                },
-                body: JSON.stringify({
+                text:
+                JSON.stringify({
 
-                    usuario_id:
-                    usuario.id,
+                    id: usuario.id,
+                    nome: dados.nome,
+                    matricula: dados.matricula
 
-                    valor:
-                    Number(valor)
+                }),
 
-                })
+                width:150,
+                height:150
             }
+
         );
 
-        const dados =
-        await resposta.json();
-
-        alert(dados.mensagem);
-
-        document.getElementById(
-            'valorRecarga'
-        ).value = '';
-
-        carregarSaldo();
-        carregarHistorico();
-
     }catch(err){
 
         console.error(err);
+
+        alert(
+            'Erro ao carregar carteirinha'
+        );
 
     }
 
 }
 
-carregarSaldo();
-carregarHistorico();
+carregarCarteirinha();
