@@ -13,7 +13,7 @@ async function carregarSaldo(){
 
         const resposta =
         await fetch(
-            `http://localhost:3000/carteira/saldo/${usuario.id}`
+            `/carteira/saldo/${usuario.id}`
         );
 
         const dados =
@@ -36,7 +36,7 @@ async function carregarHistorico(){
 
         const resposta =
         await fetch(
-            `http://localhost:3000/carteira/movimentacoes/${usuario.id}`
+            `/carteira/movimentacoes/${usuario.id}`
         );
 
         const movimentacoes =
@@ -118,7 +118,7 @@ async function recarregar(){
 
         const resposta =
         await fetch(
-            'http://localhost:3000/carteira/recarga',
+            '/carteira/recarga',
             {
                 method:'POST',
                 headers:{
