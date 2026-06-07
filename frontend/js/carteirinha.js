@@ -1,108 +1,161 @@
 const usuario =
 JSON.parse(
-Storage.getItem('usuario')
+    localStorage.getItem('usuario')
 );
 
 
 
-async function carregarCarteirinha(){
+
+
+async function carregarSaldo(){
 
     try{
 
         const resposta =
         await fetch(
-            `/carteirinha/${usuario.id}`
+            `http://localhost:3000/carteira/saldo/${usuario.id}`
         );
 
         const dados =
         await resposta.json();
-        console.log(dados);
 
-        if(dados.erro){
-
-            alert(dados.erro);
-
-            return;
-
-        }
-
-        document.getElementById(
-            'nome'
-        ).innerText =
-        dados.nome || '-';
-
-        document.getElementById(
-            'matricula'
-        ).innerText =
-        dados.matricula || '-';
-
-        document.getElementById(
-            'curso'
-        ).innerText =
-        dados.curso || '-';
-
-        document.getElementById(
-            'instituicao'
-        ).innerText =
-        dados.universidade || '-';
-
-        document.getElementById(
-            'turno'
-        ).innerText =
-        dados.turno || '-';
-
-        document.getElementById(
-            'validade'
-        ).innerText =
-        dados.validade_carteirinha
-        ?
-        new Date(
-            dados.validade_carteirinha
-        ).toeDateString('pt-BR')
-        :
-        '-';
-
-        if(dados.foto_perfil){
-
-            document.getElementById(
-                'fotoAluno'
-            ).src =
-            dados.foto_perfil;
-
-        }
-
-        new QRCode(
-
-            document.getElementById(
-                'qrcode'
-            ),
-
-            {
-                text:
-                JSON.stringify({
-
-                    id: usuario.id,
-                    nome: dados.nome,
-                    matricula: dados.matricula
-
-                }),
-
-                width:150,
-                height:150
-            }
-
-        );
+        document.getElementById('saldo').innerHTML =
+        `Saldo: R$ ${Number(dados.saldo).toFixed(2)}`;
 
     }catch(err){
 
         console.error(err);
 
-        alert(
-            'Erro ao carregar carteirinha'
+    }
+
+}
+
+async function carregarHistorico(){
+
+    try{
+
+        const resposta =
+        await fetch(
+            `http://localhost:3000/carteira/movimentacoes/${usuario.id}`
         );
+
+        const movimentacoes =
+        await resposta.json();
+
+        console.log(movimentacoes);
+
+        if(movimentacoes.length === 0){
+
+            document.getElementById(
+                'historico'
+            ).innerHTML =
+            '<p>Nenhuma movimentação encontrada.</p>';
+
+            return;
+
+        }
+
+        let html = '';
+
+        movimentacoes.forEach(m => {
+
+            const cor =
+            m.tipo === 'RECARGA'
+            ? 'text-success'
+            : 'text-danger';
+
+            html += `
+            <div class="card p-2 mb-2">
+
+                <strong class="${cor}">
+                    ${m.tipo}
+                </strong>
+
+                <br>
+
+                R$ ${Number(m.valor).toFixed(2)}
+
+                <br>
+
+                <small>
+                    ${new Date(m.created_at)
+                        .toLocaleString('pt-BR')}
+                </small>
+
+            </div>
+            `;
+
+        });
+
+        document.getElementById(
+            'historico'
+        ).innerHTML = html;
+
+    }catch(err){
+
+        console.error(err);
 
     }
 
 }
 
-carregarCarteirinha();
+async function recarregar(){
+
+    const valor =
+    document.getElementById(
+        'valorRecarga'
+    ).value;
+
+    if(!valor){
+
+        alert('Informe um valor');
+
+        return;
+
+    }
+
+    try{
+
+        const resposta =
+        await fetch(
+            'http://localhost:3000/carteira/recarga',
+            {
+                method:'POST',
+                headers:{
+                    'Content-Type':
+                    'application/json'
+                },
+                body: JSON.stringify({
+
+                    usuario_id:
+                    usuario.id,
+
+                    valor:
+                    Number(valor)
+
+                })
+            }
+        );
+
+        const dados =
+        await resposta.json();
+
+        alert(dados.mensagem);
+
+        document.getElementById(
+            'valorRecarga'
+        ).value = '';
+
+        carregarSaldo();
+        carregarHistorico();
+
+    }catch(err){
+
+        console.error(err);
+
+    }
+
+}
+
+carregarSaldo();
+carregarHistorico();
