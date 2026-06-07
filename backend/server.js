@@ -30,7 +30,6 @@ app.use(
 
 app.use('/rotas', require('./routes/rotas'));
 app.use('/usuarios', require('./routes/usuarios'));
-app.use('/reservas', require('./routes/reservas'));
 app.use('/avisos', require('./routes/avisos'));
 app.use('/carteira', require('./routes/carteira'));
 app.use('/passagens', require('./routes/passagens'));
