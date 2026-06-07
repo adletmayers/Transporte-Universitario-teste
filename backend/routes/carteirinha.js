@@ -5,11 +5,19 @@ const db = require('../config/database');
 
 /*
 ========================================
-BUSCAR CARTEIRINHA
+CONSULTAR CARTEIRA
 ========================================
 */
 
-router.get('/:usuarioId', async (req, res) => {
+
+
+/*
+========================================
+CONSULTAR SALDO
+========================================
+*/
+
+router.get('/saldo/:usuarioId', async (req, res) => {
 
     try {
 
@@ -17,36 +25,115 @@ router.get('/:usuarioId', async (req, res) => {
 
         const resultado = await db.query(
             `
-            SELECT
-                nome,
-                matricula,
-                universidade,
-                curso,
-                turno,
-                validade_carteirinha,
-                foto_perfil
+            SELECT saldo
+            FROM carteiras
+            WHERE usuario_id = $1
+            `,
+            [usuarioId]
+        );
+
+        if (resultado.rows.length === 0) {
+
+            return res.json({
+                saldo: 0
+            });
+
+        }
+
+        res.json({
+            saldo: resultado.rows[0].saldo
+        });
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        res.status(500).json({
+            erro: 'Erro interno do servidor'
+        });
+
+    }
+
+});
+router.get('/movimentacoes/:usuarioId', async (req, res) => {
+
+    try {
+
+        const { usuarioId } = req.params;
+
+        const resultado = await db.query(
+            `
+            SELECT *
+            FROM movimentacoes_carteira
+            WHERE usuario_id = $1
+            ORDER BY created_at DESC
+            `,
+            [usuarioId]
+        );
+
+        res.json(resultado.rows);
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        res.status(500).json({
+            erro: 'Erro interno do servidor'
+        });
+
+    }
+
+});
+
+router.get('/:usuarioId', async (req, res) => {
+
+    try {
+
+        const { usuarioId } = req.params;
+
+        const usuario = await db.query(
+            `
+            SELECT id
             FROM usuarios
             WHERE id = $1
             `,
             [usuarioId]
         );
 
-        if(resultado.rows.length === 0){
+        if (usuario.rows.length === 0) {
 
             return res.status(404).json({
-                erro:'Usuário não encontrado'
+                erro: 'Usuário não encontrado'
             });
 
         }
 
-        res.json(resultado.rows[0]);
+        const carteira = await db.query(
+            `
+            SELECT *
+            FROM carteiras
+            WHERE usuario_id = $1
+            `,
+            [usuarioId]
+        );
 
-    } catch(err){
+        if (carteira.rows.length === 0) {
 
-        console.error(err);
+            return res.json({
+                saldo: 0,
+                movimentacoes: []
+            });
+
+        }
+
+        res.json(carteira.rows);
+
+    } catch (erro) {
+
+        console.error(erro);
 
         res.status(500).json({
-            erro:'Erro interno'
+            erro: 'Erro interno do servidor'
         });
 
     }
@@ -54,69 +141,173 @@ router.get('/:usuarioId', async (req, res) => {
 });
 /*
 ========================================
-CRIAR / ATUALIZAR
+ADICIONAR SALDO
 ========================================
 */
 
-/*router.post('/', async (req, res) => {
+router.post('/recarga', async (req, res) => {
 
     try {
 
         const {
             usuario_id,
-            matricula,
-            curso,
-            instituicao,
-            validade
+            valor
         } = req.body;
+
+        if (!usuario_id || !valor) {
+
+            return res.status(400).json({
+                erro: 'Informe usuário e valor'
+            });
+
+        }
 
         await db.query(
             `
-            INSERT INTO carteirinhas
+            UPDATE carteiras
+            SET saldo = saldo + $1
+            WHERE usuario_id = $2
+            `,
+            [
+                valor,
+                usuario_id
+            ]
+        );
+
+        // REGISTRA MOVIMENTAÇÃO
+        await db.query(
+            `
+            INSERT INTO movimentacoes_carteira
             (
                 usuario_id,
-                matricula,
-                curso,
-                instituicao,
-                validade
+                tipo,
+                valor
             )
             VALUES
             (
-                $1,$2,$3,$4,$5
+                $1,
+                'RECARGA',
+                $2
             )
-
-            ON CONFLICT(usuario_id)
-
-            DO UPDATE SET
-
-            matricula = EXCLUDED.matricula,
-            curso = EXCLUDED.curso,
-            instituicao = EXCLUDED.instituicao,
-            validade = EXCLUDED.validade
             `,
             [
                 usuario_id,
-                matricula,
-                curso,
-                instituicao,
-                validade
+                valor
             ]
         );
 
         res.json({
-            mensagem:'Carteirinha salva'
+            mensagem: 'Recarga realizada com sucesso'
         });
 
-    } catch(err){
+    } catch (erro) {
 
-        console.error(err);
+        console.error(erro);
 
         res.status(500).json({
-            erro:'Erro interno'
+            erro: 'Erro interno do servidor'
         });
 
     }
 
 });
+/*
+========================================
+DEBITAR SALDO
+========================================
 */
+
+router.post('/debito', async (req, res) => {
+
+    try {
+
+        const {
+            usuario_id,
+            valor
+        } = req.body;
+
+        const carteira = await db.query(
+            `
+            SELECT saldo
+            FROM carteiras
+            WHERE usuario_id = $1
+            `,
+            [usuario_id]
+        );
+
+        if (carteira.rows.length === 0) {
+
+            return res.status(404).json({
+                erro: 'Carteira não encontrada'
+            });
+
+        }
+
+        const saldoAtual =
+            Number(carteira.rows[0].saldo);
+
+        if (saldoAtual < valor) {
+
+            return res.status(400).json({
+                erro: 'Saldo insuficiente'
+            });
+
+        }
+
+        await db.query(
+            `
+            UPDATE carteiras
+            SET saldo = saldo - $1
+            WHERE usuario_id = $2
+            `,
+            [
+                valor,
+                usuario_id
+            ]
+        );
+
+        // REGISTRA MOVIMENTAÇÃO
+        await db.query(
+            `
+            INSERT INTO movimentacoes_carteira
+            (
+                usuario_id,
+                tipo,
+                valor
+            )
+            VALUES
+            (
+                $1,
+                'DEBITO',
+                $2
+            )
+            `,
+            [
+                usuario_id,
+                valor
+            ]
+        );
+
+        res.json({
+            mensagem: 'Débito realizado com sucesso'
+        });
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        res.status(500).json({
+            erro: 'Erro interno do servidor'
+        });
+
+    }
+
+});
+/*
+========================================
+HISTÓRICO DA CARTEIRA
+========================================
+*/
+
+
 module.exports = router;
